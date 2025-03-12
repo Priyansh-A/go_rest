@@ -9,7 +9,7 @@ import (
 )
 
 type HTTPServer struct {
-	Addr string
+	Addr string `yaml:"address" env-required:"true"`
 }
 
 // env-default: production . when we dont pass any environment
@@ -30,18 +30,18 @@ func MustLoad() *Config {
 		flag.Parse()
 		configPath = *flags
 		if configPath == "" {
-			log.Fatal("config path is not set")
+			configPath = "./config/local.yaml"
 		}
 
 	}
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		log.Fatalf("config file does not exist : %s, configPath")
+		log.Fatalf("config file does not exist : %s", configPath)
 	}
 	var cfg Config
 
-	err := cleanenv.ReadConfig(configpath, &cfg)
+	err := cleanenv.ReadConfig(configPath, &cfg)
 	if err != nil {
-		log.Fatalf("cannot read config file : %s, err.Error()")
+		log.Fatalf("cannot read config file : %s", err.Error())
 	}
 	return &cfg
 }
