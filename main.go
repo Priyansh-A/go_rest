@@ -20,16 +20,18 @@ func main() {
 	cfg := config.MustLoad()
 
 	// database setup
-	_, err := sqlite.New(cfg)
+	storage, err := sqlite.New(cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	slog.Info("Storage initialization", slog.String("env", cfg.Env), slog.String("version", "1.0.0"))
+	slog.Info("Storage initialized",
+		slog.String("env", cfg.Env),
+		slog.String("version", "1.0.0"))
 
 	router := http.NewServeMux()
 
-	router.HandleFunc("POST /api/students", student.New())
+	router.HandleFunc("POST /api/students", student.New(storage))
 
 	// server setup
 	server := http.Server{
