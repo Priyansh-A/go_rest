@@ -18,7 +18,6 @@ import (
 func main() {
 	// load config
 	cfg := config.MustLoad()
-
 	// database setup
 	storage, err := sqlite.New(cfg)
 	if err != nil {
@@ -33,6 +32,7 @@ func main() {
 
 	router.HandleFunc("POST /api/students", student.New(storage))
 	router.HandleFunc("GET /api/students/{id}", student.GetById(storage))
+	router.HandleFunc("DELETE /api/students/{id}", student.DeleteById(storage))
 	router.HandleFunc("GET /api/students", student.GetList(storage))
 
 	// server setup
