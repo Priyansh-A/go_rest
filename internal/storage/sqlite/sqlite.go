@@ -130,3 +130,27 @@ func (s *Sqlite) DeleteStudentsById(id int64) error {
 
 	return nil
 }
+
+func (s *Sqlite) UpdateStudentById(id int64, name, email string, age int) error {
+	stmt, err := s.Db.Prepare("UPDATE students SET name = ?, email = ?, age = ? WHERE id = ?")
+	if err != nil {
+		return fmt.Errorf("prepare statement error: %w", err)
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(name, email, age, id)
+	if err != nil {
+		return fmt.Errorf("execution error: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("rows affected error: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no student found with id %d", id)
+	}
+
+	return nil
+}
